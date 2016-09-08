@@ -1,0 +1,7 @@
+api:
+  errors:
+    server_error: "Sorry, something went wrong"
+    activerecord:
+      invalid: "Data is invalid"
+      not_found: "Couldn't find this data"
+    bad_credentials: "Bad Credentials"
