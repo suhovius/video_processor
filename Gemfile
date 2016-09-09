@@ -48,7 +48,7 @@ end
 
 group :test do
   gem 'rspec-sidekiq'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '~> 3.1'
   gem 'simplecov'
   # gem 'webmock'
   gem 'mock_redis'
