@@ -1,7 +1,8 @@
-api:
-  errors:
-    server_error: "Sorry, something went wrong"
-    data:
-      invalid: "Data is invalid"
-      not_found: "Couldn't find this data"
-    bad_credentials: "Bad Credentials"
+en:
+  api:
+    errors:
+      server_error: "Sorry, something went wrong"
+      data:
+        invalid: "Data is invalid"
+        not_found: "Couldn't find this data"
+      bad_credentials: "Bad Credentials"

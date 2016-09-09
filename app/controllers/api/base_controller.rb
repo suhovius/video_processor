@@ -27,13 +27,18 @@ class Api::BaseController < ApplicationController
   protected
 
     def current_user
-      authenticate_token || render_unauthorized
+      @current_user
     end
 
-    def authenticate_token
+    def find_user_by_token
       authenticate_with_http_token do |token, options|
         @current_user = User.find_by(api_token: token)
       end
+      @current_user
+    end
+
+    def authenticate_user!
+      find_user_by_token || render_unauthorized
     end
 
     def render_unauthorized(realm = "Application")

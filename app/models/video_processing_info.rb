@@ -6,17 +6,35 @@ class VideoProcessingInfo
   field :started_at, type: Time
   field :completed_at, type: Time
   field :failed_at, type: Time
-  field :input_params, type: Hash
-  field :output_metadata, type: Hash
+  field :trim_start, type: Integer
+  field :trim_end, type: Integer
+  field :source_file_duration, type: Integer
+  field :result_file_duration, type: Integer
 
   belongs_to :user, inverse_of: :video_processing_infos
 
+  validates :trim_start, :trim_end, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+
+  VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
+
   has_mongoid_attached_file :source_file
-  validates_attachment_content_type :source_file, content_type: ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
+  validates_attachment_content_type :source_file, content_type: VIDEO_CONTENT_TYPES
   validates_attachment_presence :source_file
 
   has_mongoid_attached_file :result_file
-  validates_attachment_content_type :result_file, content_type: ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
+  validates_attachment_content_type :result_file, content_type: VIDEO_CONTENT_TYPES
+
+  after_post_process do |record|
+    if self.source_file?
+      movie = FFMPEG::Movie.new(self.source_file.queued_for_write[:original].path)
+      self.source_file_duration = movie.duration
+    end
+
+    if self.result_file?
+      movie = FFMPEG::Movie.new(self.result_file.queued_for_write[:original].path)
+      self.result_file_duration = movie.duration
+    end
+  end
 
   state_machine initial: :scheduled do
     state :scheduled

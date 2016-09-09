@@ -3,7 +3,8 @@ include ActionDispatch::TestProcess
 FactoryGirl.define do
   factory :video_processing_info do
     association(:user)
-    input_params { { trim_start: 3, trim_end: 10 } }
+    trim_start { 3 }
+    trim_end { 10 }
 
     started_at { nil }
     completed_at { nil }
