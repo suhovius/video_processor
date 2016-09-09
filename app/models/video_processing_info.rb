@@ -26,6 +26,11 @@ class VideoProcessingInfo
       vpd.failed_at = nil
     end
 
+    before_transition failed: :scheduled do |vpd|
+      vpd.started_at = nil
+      vpd.failed_at = nil
+    end
+
     before_transition processing: :done do |vpd|
       vpd.completed_at = Time.zone.now
     end
@@ -34,8 +39,12 @@ class VideoProcessingInfo
       vpd.failed_at = Time.zone.now
     end
 
+    event :schedule do
+      transition :failed => :scheduled
+    end
+
     event :start do
-      transition [:scheduled, :failed] => :processing
+      transition :scheduled => :processing
     end
 
     event :complete do

@@ -38,7 +38,6 @@ group :development, :test do
 
   # Use RSpec for specs
   gem 'rspec-rails', '3.1.0'
-  gem 'mongoid-rspec' # Unfortunately there is no this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
 
   # Use Factory Girl for generating random test data
   gem 'factory_girl_rails'
@@ -53,6 +52,8 @@ group :test do
   gem 'simplecov'
   # gem 'webmock'
   gem 'mock_redis'
+  gem 'state_machine_rspec'
+  gem 'mongoid-rspec' # Unfortunately there is no this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
 end
 
 group :development do
