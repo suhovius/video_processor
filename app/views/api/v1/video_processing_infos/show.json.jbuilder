@@ -1,6 +1,6 @@
 json.id @video_processing_info.id.to_s
 
-json.(@video_processing_info, :trim_start, :trim_end)
+json.(@video_processing_info, :trim_start, :trim_end, :state)
 
 [:source_file, :result_file].each do |attr_name|
   json.set! attr_name do

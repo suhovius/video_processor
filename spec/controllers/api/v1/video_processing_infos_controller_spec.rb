@@ -8,7 +8,7 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
         @auth_params = { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(@user.api_token) }
       end
 
-      context 'with valid params' do
+      context "with valid params" do
         before do
           @params = {
             "video_processing_info" => {
@@ -27,6 +27,8 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
           expect(json["trim_start"]).to eql @params["video_processing_info"]["trim_start"]
           expect(json["trim_end"]).to eql @params["video_processing_info"]["trim_end"]
 
+          expect(json["state"]).to eql "scheduled"
+
           video_processing_info = @user.video_processing_infos.last
 
           expect(json["source_file"]["url"]).to eql video_processing_info.source_file.url
@@ -34,8 +36,53 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
           expect(json).to match(video_processing_info_hash(video_processing_info))
         end
       end
+
+      context "with invalid params" do
+        before do
+          @params = {
+            "video_processing_info" => {
+              "trim_start" => 5
+            }
+          }
+        end
+
+        it "should not create video_processing_info and return error" do
+          expect { post "/api/v1/video_processing_infos.json", @params, @auth_params }.to_not change { @user.video_processing_infos.count }
+
+          expect(last_response.status).to eql http_status_for(:unprocessable_entity)
+
+          expected_error_hash = {
+            "error" => "Trim end can't be blank",
+            "details" => {
+              "trim_end" => ["can't be blank", "is not a number"],
+              "source_file"=>["can't be blank"]
+            }
+          }
+
+          expect(json).to match(expected_error_hash)
+        end
+      end
     end
 
+    context 'when user is not authenticated' do
+      before do
+        @params = {
+          "video_processing_info" => {
+            "trim_start" => 2,
+            "trim_end" => 12,
+            "source_file" => fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime')
+          }
+        }
+      end
+
+      it "should not create video_processing_info and return unauthorized error" do
+        expect { post "/api/v1/video_processing_infos.json", @params, {} }.to_not change { VideoProcessingInfo.count }
+
+        expect(last_response.status).to eql http_status_for(:unauthorized)
+
+        expect(json).to match({ "error" => I18n.t("api.errors.bad_credentials") })
+      end
+    end
   end
 
   private
@@ -54,7 +101,8 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
         },
         "started_at" => video_processing_info.started_at? ? video_processing_info.started_at.to_i : nil ,
         "completed_at" => video_processing_info.completed_at? ? video_processing_info.completed_at.to_i : nil,
-        "failed_at" => video_processing_info.failed_at? ? video_processing_info.to_i : nil
+        "failed_at" => video_processing_info.failed_at? ? video_processing_info.to_i : nil,
+        "state" => video_processing_info.state
       }
     end
 

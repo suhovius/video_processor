@@ -43,7 +43,7 @@ class Api::BaseController < ApplicationController
 
     def render_unauthorized(realm = "Application")
       self.headers["WWW-Authenticate"] = %(Token realm="#{realm.gsub(/"/, "")}")
-      render json: { error: 'Bad credentials' }, status: :unauthorized
+      render json: { error: I18n.t("api.errors.bad_credentials") }, status: :unauthorized
     end
 
 end
