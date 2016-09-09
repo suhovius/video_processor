@@ -5,4 +5,5 @@ en:
       data:
         invalid: "Data is invalid"
         not_found: "Couldn't find this data"
+        invalid_transition: "Cannot switch %{state_attr_name} from %{current_state_name} via %{event_name}"
       bad_credentials: "Bad Credentials"

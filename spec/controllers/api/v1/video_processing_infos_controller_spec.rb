@@ -1,6 +1,7 @@
 require "spec_helper"
 
 require Rails.root.join('spec', 'controllers', 'api', 'v1', 'shared_examples', 'unauthorized_user_error.rb')
+require Rails.root.join('spec', 'controllers', 'api', 'v1', 'shared_examples', 'data_not_found_error.rb')
 
 describe Api::V1::VideoProcessingInfosController, type: :api do
   describe "POST create" do
@@ -133,6 +134,58 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
             expect(json.size).to eql(1)
             expect(json.first).to match(video_processing_info_hash(@video_processing_infos[1]))
           end
+        end
+      end
+    end
+  end
+
+  describe "PATCH restart" do
+    context 'when user is not authenticated' do
+      it_behaves_like "return error for unauthorized user", :patch, "/api/v1/video_processing_infos/#{FactoryGirl.create(:video_processing_info).id}/restart.json"
+    end
+
+    context 'when user is authenticated' do
+      before do
+        create_authenticated_user
+      end
+
+      context "when video_processing_info is not exist" do
+        it_behaves_like "return error if data is not found", :patch, "/api/v1/video_processing_infos/not_exitsting_id_#{rand(100)}/restart.json"
+      end
+
+      context "when video_processing_info is not belong to current user" do
+        it_behaves_like "return error if data is not found", :patch, "/api/v1/video_processing_infos/#{FactoryGirl.create(:video_processing_info, state: "failed").id}/restart.json"
+      end
+
+      context 'when video_processing_info can not be restarted' do
+        before do
+          @video_processing_info = create(:video_processing_info, state: "done", user: @user)
+        end
+
+        it "shoud return error" do
+          patch "/api/v1/video_processing_infos/#{@video_processing_info.id}/restart.json", @params, @auth_params
+
+          expect(last_response.status).to eql http_status_for(:unprocessable_entity)
+
+          expected_error_hash = {
+            "error" => I18n.t("api.errors..data.invalid_transition", state_attr_name: "state", current_state_name: "done", event_name: "schedule"),
+            "details" => {}
+          }
+
+          expect(json).to match(expected_error_hash)
+        end
+      end
+
+      context 'when video_processing_info can be restarted' do
+        before do
+          @video_processing_info = create(:video_processing_info, state: "failed", user: @user)
+        end
+
+        it "should successfully switch state from failed to scheduled and return this video_processing_info json" do
+          expect { patch "/api/v1/video_processing_infos/#{@video_processing_info.id}/restart.json", @params, @auth_params }.to change { @video_processing_info.reload.state }.from("failed").to("scheduled")
+
+          expect(last_response.status).to eql http_status_for(:accepted)
+          expect(json).to match(video_processing_info_hash(@video_processing_info.reload))
         end
       end
     end

@@ -19,6 +19,9 @@ class Api::BaseController < ApplicationController
     when "ActionController::ParameterMissing", "ApiError"
       status = :unprocessable_entity
       error_hash[:error] = exception.message
+    when "StateMachine::InvalidTransition"
+      status = :unprocessable_entity
+      error_hash[:error] = I18n.t("api.errors.data.invalid_transition", state_attr_name: exception.machine.name, current_state_name: exception.from_name.to_s, event_name: exception.event.to_s)
     end
 
     render status: status, json: error_hash, layout: false
