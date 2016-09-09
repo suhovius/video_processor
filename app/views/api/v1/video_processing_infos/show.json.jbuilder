@@ -1,14 +1,1 @@
-json.id @video_processing_info.id.to_s
-
-json.(@video_processing_info, :trim_start, :trim_end, :state)
-
-[:source_file, :result_file].each do |attr_name|
-  json.set! attr_name do
-    json.url @video_processing_info.send("#{attr_name}?") ? @video_processing_info.send(attr_name).url : nil
-    json.duration @video_processing_info.send("#{attr_name}_duration")
-  end
-end
-
-[:started_at, :completed_at, :failed_at].each do |attr_name|
-  json.set! attr_name, @video_processing_info.send("#{attr_name}?") ? @video_processing_info.send(attr_name).to_i : nil
-end
+json.partial! 'api/v1/video_processing_infos/base', video_processing_info: @video_processing_info

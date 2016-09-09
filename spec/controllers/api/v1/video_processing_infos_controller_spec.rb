@@ -1,11 +1,12 @@
 require "spec_helper"
 
+require Rails.root.join('spec', 'controllers', 'api', 'v1', 'shared_examples', 'unauthorized_user_error.rb')
+
 describe Api::V1::VideoProcessingInfosController, type: :api do
   describe "POST create" do
     context 'when user is authenticated' do
       before do
-        @user = create(:user)
-        @auth_params = { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(@user.api_token) }
+        create_authenticated_user
       end
 
       context "with valid params" do
@@ -75,12 +76,64 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
         }
       end
 
-      it "should not create video_processing_info and return unauthorized error" do
+      it "should not create video_processing_info" do
         expect { post "/api/v1/video_processing_infos.json", @params, {} }.to_not change { VideoProcessingInfo.count }
+      end
 
-        expect(last_response.status).to eql http_status_for(:unauthorized)
+      it_behaves_like "return error for unauthorized user", :post, '/api/v1/video_processing_infos.json', @params
+    end
+  end
 
-        expect(json).to match({ "error" => I18n.t("api.errors.bad_credentials") })
+  describe "GET index" do
+    context 'when user is not authenticated' do
+      it_behaves_like "return error for unauthorized user", :post, '/api/v1/video_processing_infos.json'
+    end
+
+    context 'when user is authenticated' do
+      before do
+        create_authenticated_user
+      end
+
+      context "with valid params" do
+        before do
+          @video_processing_infos = 3.times.map do |i|
+            travel_to (Time.zone.now - i.hour) do
+              create(:video_processing_info, user: @user)
+            end
+          end
+        end
+
+        it "should return list video_processing_infos in descending creation order" do
+          get "/api/v1/video_processing_infos.json", {}, @auth_params
+
+          expect(last_response.status).to eql http_status_for(:ok)
+
+          expect(json).to be_kind_of(Array)
+          expect(json.size).to eql(3)
+
+          expect(json[2]).to match(video_processing_info_hash(@video_processing_infos[2]))
+          expect(json[1]).to match(video_processing_info_hash(@video_processing_infos[1]))
+          expect(json[0]).to match(video_processing_info_hash(@video_processing_infos[0]))
+        end
+
+        context 'when pagination params are provided' do
+          before do
+            @params = {
+              "per_page" => 1,
+              "page" => 2
+            }
+          end
+
+          it "should return specified page only" do
+            get "/api/v1/video_processing_infos.json", @params, @auth_params
+
+            expect(last_response.status).to eql http_status_for(:ok)
+
+            expect(json).to be_kind_of(Array)
+            expect(json.size).to eql(1)
+            expect(json.first).to match(video_processing_info_hash(@video_processing_infos[1]))
+          end
+        end
       end
     end
   end
