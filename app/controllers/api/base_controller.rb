@@ -9,13 +9,13 @@ class Api::BaseController < ApplicationController
     error_hash = { error: I18n.t("api.errors.server_error"), details: {} }
 
     case exception.class.name
-    when "ActiveRecord::RecordInvalid"
+    when "Mongoid::Errors::Validations"
       status = :unprocessable_entity
-      error_hash[:error] = exception.try(:record).try(:errors).try(:full_messages).first || I18n.t("api.errors.activerecord.invalid")
+      error_hash[:error] = exception.try(:record).try(:errors).try(:full_messages).first || I18n.t("api.errors.data.invalid")
       error_hash[:details] = (exception.try(:record).try(:errors) || {})
-    when "ActiveRecord::RecordNotFound"
+    when "Mongoid::Errors::DocumentNotFound"
       status = :not_found
-      error_hash[:error] = I18n.t("api.errors.activerecord.not_found")
+      error_hash[:error] = I18n.t("api.errors.data.not_found")
     when "ActionController::ParameterMissing", "ApiError"
       status = :unprocessable_entity
       error_hash[:error] = exception.message

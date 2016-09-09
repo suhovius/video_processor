@@ -3,18 +3,24 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
-# Use Puma as the app server
-# gem 'puma', '~> 3.0'
+
+# Data Storage
+gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
+gem "mongoid-paperclip"
+gem 'state_machine'
+gem 'kaminari'
+
+# Background jobs
+gem 'sidekiq'
+
+# Video Processing
+gem 'streamio-ffmpeg'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 
-gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
-gem "mongoid-paperclip"
-
-gem 'sidekiq'
-gem 'streamio-ffmpeg'
-
+# Use Puma as the app server
+# gem 'puma', '~> 3.0'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password

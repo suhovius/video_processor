@@ -8,8 +8,6 @@ describe Api::V1::UsersController, type: :api do
       expect(last_response.status).to eql http_status_for(:created)
 
       expect(json["api_token"]).to eql User.last.api_token
-
-      p json
     end
   end
 end
