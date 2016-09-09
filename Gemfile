@@ -8,7 +8,7 @@ gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
 gem "mongoid-paperclip"
 gem 'state_machine'
-gem 'kaminari'
+gem 'kaminari-mongoid', '~> 0.1.0'
 
 # Background jobs
 gem 'sidekiq'
@@ -38,6 +38,7 @@ group :development, :test do
 
   # Use RSpec for specs
   gem 'rspec-rails', '3.1.0'
+  gem 'mongoid-rspec' # Unfortunately there is no this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
 
   # Use Factory Girl for generating random test data
   gem 'factory_girl_rails'

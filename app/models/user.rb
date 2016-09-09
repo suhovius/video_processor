@@ -5,7 +5,7 @@ class User
 
   index({ api_token: 1 }, { unique: true, name: "api_token_index" })
 
-  has_many :video_processing_infos, dependent: :destroy
+  has_many :video_processing_infos, inverse_of: :user, dependent: :destroy
 
   # Assign an API key on create
   before_create do |user|

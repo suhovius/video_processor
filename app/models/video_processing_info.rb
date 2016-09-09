@@ -1,12 +1,19 @@
 class VideoProcessingInfo
   include Mongoid::Document
   include Mongoid::Timestamps
+  include Mongoid::Paperclip
 
   field :started_at, type: Time
   field :completed_at, type: Time
   field :failed_at, type: Time
+  field :input_params, type: Hash
+  field :output_metadata, type: Hash
 
   belongs_to :user, inverse_of: :video_processing_infos
+
+  has_mongoid_attached_file :source_file
+
+  has_mongoid_attached_file :result_file
 
   state_machine initial: :scheduled do
     state :scheduled
@@ -35,7 +42,7 @@ class VideoProcessingInfo
       transition :processing => :done
     end
 
-    event :fail do
+    event :failure do
       transition :processing => :failed
     end
   end
