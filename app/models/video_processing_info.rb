@@ -12,8 +12,11 @@ class VideoProcessingInfo
   belongs_to :user, inverse_of: :video_processing_infos
 
   has_mongoid_attached_file :source_file
+  validates_attachment_content_type :source_file, content_type: ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
+  validates_attachment_presence :source_file
 
   has_mongoid_attached_file :result_file
+  validates_attachment_content_type :result_file, content_type: ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
   state_machine initial: :scheduled do
     state :scheduled
