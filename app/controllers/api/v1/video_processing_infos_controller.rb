@@ -6,6 +6,7 @@ class Api::V1::VideoProcessingInfosController < ::Api::BaseController
 
   def create
     @video_processing_info = current_user.video_processing_infos.create!(video_processing_info_params)
+    @video_processing_info.enqueue! # Avoid using this at record creation callback. It is better to control it manually in this case
     render status: :created, action: "show"
   end
 

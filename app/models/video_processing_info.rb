@@ -45,22 +45,23 @@ class VideoProcessingInfo
     state :done
     state :failed
 
-    before_transition scheduled: :processing do |vpd|
-      vpd.started_at = Time.zone.now
-      vpd.failed_at = nil
+    before_transition scheduled: :processing do |vpi|
+      vpi.started_at = Time.zone.now
+      vpi.failed_at = nil
     end
 
-    before_transition failed: :scheduled do |vpd|
-      vpd.started_at = nil
-      vpd.failed_at = nil
+    before_transition failed: :scheduled do |vpi|
+      vpi.started_at = nil
+      vpi.failed_at = nil
+      vpi.enqueue!
     end
 
-    before_transition processing: :done do |vpd|
-      vpd.completed_at = Time.zone.now
+    before_transition processing: :done do |vpi|
+      vpi.completed_at = Time.zone.now
     end
 
-    before_transition processing: :failed do |vpd|
-      vpd.failed_at = Time.zone.now
+    before_transition processing: :failed do |vpi|
+      vpi.failed_at = Time.zone.now
     end
 
     event :schedule do
@@ -77,6 +78,14 @@ class VideoProcessingInfo
 
     event :failure do
       transition :processing => :failed
+    end
+  end
+
+  def enqueue!
+    if self.scheduled?
+      ::VideoProcessingJob.perform_later(self)
+    else
+      raise ApiError, I18n.t("api.errors.data.can_not_enqueue")
     end
   end
 

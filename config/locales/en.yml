@@ -6,6 +6,7 @@ en:
         invalid: "Data is invalid"
         not_found: "Couldn't find this data"
         invalid_transition: "Cannot switch %{state_attr_name} from %{current_state_name} via %{event_name}"
+        can_not_enqueue: "Only scheduled video processing task could be enqueued"
       bad_credentials: "Bad Credentials"
 
   ffmpeg:
