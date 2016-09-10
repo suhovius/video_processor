@@ -11,6 +11,7 @@ class VideoProcessingInfo
   field :trim_end, type: Integer
   field :source_video_duration, type: Integer
   field :result_video_duration, type: Integer
+  field :last_error, type: String
 
   belongs_to :user, inverse_of: :video_processing_infos
 
@@ -27,12 +28,12 @@ class VideoProcessingInfo
   validates_attachment_content_type :result_video, content_type: VIDEO_CONTENT_TYPES
 
   after_post_process do |record|
-    if self.source_video?
+    if self.source_video? && self.source_video.queued_for_write[:original]
       movie = FFMPEG::Movie.new(self.source_video.queued_for_write[:original].path)
       self.source_video_duration = movie.duration
     end
 
-    if self.result_video?
+    if self.result_video? && self.result_video.queued_for_write[:original]
       movie = FFMPEG::Movie.new(self.result_video.queued_for_write[:original].path)
       self.result_video_duration = movie.duration
     end
@@ -80,14 +81,27 @@ class VideoProcessingInfo
   end
 
   def perform_processing!
-    self.start!
     dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
-    FileUtils.mkdir_p(dir_path)
-    source_video_extension = File.extname(self.source_video_file_name)
-    source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
-    result_video_name
-    movie = FFMPEG::Movie.new(self.source_video.path)
-    movie.transcode("MG_5988_tr_2.MOV", %w(-ss 60 -t 7))
-    self.complete!
+    begin
+      self.start!
+      FileUtils.mkdir_p(dir_path)
+      source_video_extension = File.extname(self.source_video_file_name)
+      source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
+      tmp_file_path = "#{dir_path}/#{source_video_basename}_trim_from_#{self.trim_start}_to_#{self.trim_end}#{source_video_extension}"
+      movie = FFMPEG::Movie.new(self.source_video.path)
+      movie.transcode(tmp_file_path, ["-ss", self.trim_start.to_s, "-t", (self.trim_end - self.trim_start).to_s])
+      File.open(tmp_file_path, "r") do |file|
+        self.result_video = file
+        self.complete!
+      end
+    rescue FFMPEG::Error => e
+      self.last_error = I18n.t("ffmpeg.errors.encoding_failed") # FFMPEG Error message is too much unreadable. Let's use here some user friendly text.
+      self.failure!
+    rescue Exception => e
+      self.last_error = e.message
+      self.failure!
+    ensure
+      FileUtils.rm_rf(dir_path) if Dir.exists?(dir_path)
+    end
   end
 end

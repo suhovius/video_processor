@@ -7,3 +7,7 @@ en:
         not_found: "Couldn't find this data"
         invalid_transition: "Cannot switch %{state_attr_name} from %{current_state_name} via %{event_name}"
       bad_credentials: "Bad Credentials"
+
+  ffmpeg:
+    errors:
+      encoding_failed: "FFMPEG: Failed encoding"
