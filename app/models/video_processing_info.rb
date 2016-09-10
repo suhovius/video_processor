@@ -89,13 +89,13 @@ class VideoProcessingInfo
   end
 
   def perform_processing!
-    dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
+    tmp_dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
     begin
       self.start!
-      FileUtils.mkdir_p(dir_path)
+      FileUtils.mkdir_p(tmp_dir_path)
       source_video_extension = File.extname(self.source_video_file_name)
       source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
-      tmp_file_path = "#{dir_path}/#{source_video_basename}_trim_from_#{self.trim_start}_to_#{self.trim_end}#{source_video_extension}"
+      tmp_file_path = "#{tmp_dir_path}/#{source_video_basename}_trim_from_#{self.trim_start}_to_#{self.trim_end}#{source_video_extension}"
       movie = FFMPEG::Movie.new(self.source_video.path)
       movie.transcode(tmp_file_path, ["-ss", self.trim_start.to_s, "-t", (self.trim_end - self.trim_start).to_s])
       File.open(tmp_file_path, "r") do |file|
@@ -109,7 +109,7 @@ class VideoProcessingInfo
       self.last_error = e.message
       self.failure!
     ensure
-      FileUtils.rm_rf(dir_path) if Dir.exists?(dir_path)
+      FileUtils.rm_rf(tmp_dir_path) if Dir.exists?(tmp_dir_path)
     end
   end
 

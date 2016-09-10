@@ -71,4 +71,68 @@ RSpec.describe VideoProcessingInfo, :type => :model do
       end
     end
   end
+
+  context 'instance methods' do
+    describe "perform_processing!" do
+      context 'when video_processing_info is scheduled' do
+        context 'real file processing test' do
+          before do
+            @video_processing_info = create(:video_processing_info_with_real_file, trim_start: 2, trim_end: 12)
+          end
+
+          after do
+            @video_processing_info.destroy # remove video files
+          end
+
+          it "should trim file properly", speed: 'slow' do
+            expect { @video_processing_info.perform_processing! }.to change { @video_processing_info.result_video? }.from(false).to(true)
+            expect(@video_processing_info.source_video_duration).to eql 15
+            expect(@video_processing_info.result_video_duration).to eql 10
+            expect(File).to exist(@video_processing_info.result_video.path)
+
+            expect(@video_processing_info).to be_done
+          end
+        end
+
+        context 'stub real processing test' do
+          before do
+            @video_processing_info = create(:video_processing_info, trim_start: 3, trim_end: 8)
+          end
+
+          it "should provide proper trimmig params to ffmpeg" do
+            movie = double(:movie)
+            expect(FFMPEG::Movie).to receive(:new).with(@video_processing_info.source_video.path).and_return(movie)
+            tmp_file_path = "#{::Rails.root}/tmp/video_processing_infos/#{@video_processing_info.id.to_s}/test_video_trim_from_3_to_8.mov"
+            expect(movie).to receive(:transcode).with(tmp_file_path, ["-ss", "3", "-t", "5"])
+
+            @video_processing_info.perform_processing!
+          end
+
+          context 'when ffmpeg returns error' do
+            before do
+              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_info.source_video.path).and_raise(FFMPEG::Error)
+            end
+
+            it "should save it in last_error attribute and set state to failed" do
+              expect { @video_processing_info.perform_processing! }.to change { @video_processing_info.reload.state }.from("scheduled").to("failed")
+              expect(@video_processing_info.last_error).to eql I18n.t("ffmpeg.errors.encoding_failed")
+            end
+          end
+
+          context 'when some regular exception happens' do
+            let(:exception) { StandardError.new("Some error message #{rand(100)}") }
+
+            before do
+              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_info.source_video.path).and_raise(exception)
+            end
+
+            it "should save it in last_error attribute and set state to failed" do
+              expect { @video_processing_info.perform_processing! }.to change { @video_processing_info.reload.state }.from("scheduled").to("failed")
+              expect(@video_processing_info.last_error).to eql exception.message
+            end
+          end
+        end
+      end
+    end
+  end
 end
