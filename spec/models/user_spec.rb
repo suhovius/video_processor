@@ -8,6 +8,6 @@ RSpec.describe User, :type => :model do
   end
 
   context 'associations' do
-    it { is_expected.to have_many(:video_processing_infos).as_inverse_of(:user).with_dependent(:destroy) }
+    it { is_expected.to have_many(:video_processing_tasks).as_inverse_of(:user).with_dependent(:destroy) }
   end
 end

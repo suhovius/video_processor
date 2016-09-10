@@ -1,7 +1,7 @@
 include ActionDispatch::TestProcess
 
 FactoryGirl.define do
-  factory :video_processing_info do
+  factory :video_processing_task do
     association(:user)
     trim_start { 3 }
     trim_end { 10 }
@@ -17,7 +17,7 @@ FactoryGirl.define do
     source_video_updated_at { Time.zone.now }
     source_video_fingerprint { "068dd109a9939f494071d8abe94b1c0c" }
 
-    factory :video_processing_info_with_real_file do
+    factory :video_processing_task_with_real_file do
       source_video { fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime') }
 
       # close files to prevent "Errno::EMFILE: Too many open files" error at specs

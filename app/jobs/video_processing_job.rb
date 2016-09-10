@@ -1,7 +1,7 @@
 class VideoProcessingJob < ApplicationJob
   queue_as :video_processing
 
-  def perform(video_processing_info)
-    VideoTrimmer.new(video_processing_info).perform!
+  def perform(video_processing_task)
+    VideoTrimmer.new(video_processing_task).perform!
   end
 end

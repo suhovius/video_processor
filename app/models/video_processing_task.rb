@@ -1,4 +1,4 @@
-class VideoProcessingInfo
+class VideoProcessingTask
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Paperclip
@@ -13,7 +13,7 @@ class VideoProcessingInfo
   field :result_video_duration, type: Integer
   field :last_error, type: String
 
-  belongs_to :user, inverse_of: :video_processing_infos
+  belongs_to :user, inverse_of: :video_processing_tasks
 
   validates :trim_start, :trim_end, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
@@ -97,6 +97,6 @@ class VideoProcessingInfo
 
   private
     def trim_start_is_not_greater_than_trim_end
-      self.errors.add(:base, I18n.t("mongoid.errors.models.video_processing_info.trim_start_should_be_less_than_trim_end")) if (self.trim_start? && self.trim_end?) && (self.trim_start.to_i >= self.trim_end.to_i)
+      self.errors.add(:base, I18n.t("mongoid.errors.models.video_processing_task.trim_start_should_be_less_than_trim_end")) if (self.trim_start? && self.trim_end?) && (self.trim_start.to_i >= self.trim_end.to_i)
     end
 end
