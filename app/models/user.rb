@@ -1,6 +1,7 @@
 class User
   include Mongoid::Document
   include Mongoid::Timestamps
+
   field :api_token, type: String
 
   index({ api_token: 1 }, { unique: true, name: "api_token_index" })

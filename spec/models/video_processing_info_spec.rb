@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe VideoProcessingInfo, :type => :model do
   context 'validations' do
-    it { should have_mongoid_attached_file(:source_file) }
-    it { should have_mongoid_attached_file(:result_file) }
+    it { should have_mongoid_attached_file(:source_video) }
+    it { should have_mongoid_attached_file(:result_video) }
   end
 
   context 'associations' do

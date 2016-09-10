@@ -17,7 +17,7 @@ class Api::V1::VideoProcessingInfosController < ::Api::BaseController
 
   private
     def video_processing_info_params
-      params.require(:video_processing_info).permit(:source_file, :trim_start, :trim_end)
+      params.require(:video_processing_info).permit(:source_video, :trim_start, :trim_end)
     end
 
 end

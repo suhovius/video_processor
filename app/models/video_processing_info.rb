@@ -2,14 +2,15 @@ class VideoProcessingInfo
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::Paperclip
+  include GlobalID::Identification # http://guides.rubyonrails.org/active_job_basics.html#globalid
 
   field :started_at, type: Time
   field :completed_at, type: Time
   field :failed_at, type: Time
   field :trim_start, type: Integer
   field :trim_end, type: Integer
-  field :source_file_duration, type: Integer
-  field :result_file_duration, type: Integer
+  field :source_video_duration, type: Integer
+  field :result_video_duration, type: Integer
 
   belongs_to :user, inverse_of: :video_processing_infos
 
@@ -17,22 +18,23 @@ class VideoProcessingInfo
 
   VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
-  has_mongoid_attached_file :source_file
-  validates_attachment_content_type :source_file, content_type: VIDEO_CONTENT_TYPES
-  validates_attachment_presence :source_file
+  # TODO: Refactor this. Remove code duplication for attachments
+  has_mongoid_attached_file :source_video
+  validates_attachment_content_type :source_video, content_type: VIDEO_CONTENT_TYPES
+  validates_attachment_presence :source_video
 
-  has_mongoid_attached_file :result_file
-  validates_attachment_content_type :result_file, content_type: VIDEO_CONTENT_TYPES
+  has_mongoid_attached_file :result_video
+  validates_attachment_content_type :result_video, content_type: VIDEO_CONTENT_TYPES
 
   after_post_process do |record|
-    if self.source_file?
-      movie = FFMPEG::Movie.new(self.source_file.queued_for_write[:original].path)
-      self.source_file_duration = movie.duration
+    if self.source_video?
+      movie = FFMPEG::Movie.new(self.source_video.queued_for_write[:original].path)
+      self.source_video_duration = movie.duration
     end
 
-    if self.result_file?
-      movie = FFMPEG::Movie.new(self.result_file.queued_for_write[:original].path)
-      self.result_file_duration = movie.duration
+    if self.result_video?
+      movie = FFMPEG::Movie.new(self.result_video.queued_for_write[:original].path)
+      self.result_video_duration = movie.duration
     end
   end
 
@@ -75,5 +77,17 @@ class VideoProcessingInfo
     event :failure do
       transition :processing => :failed
     end
+  end
+
+  def perform_processing!
+    self.start!
+    dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
+    FileUtils.mkdir_p(dir_path)
+    source_video_extension = File.extname(self.source_video_file_name)
+    source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
+    result_video_name
+    movie = FFMPEG::Movie.new(self.source_video.path)
+    movie.transcode("MG_5988_tr_2.MOV", %w(-ss 60 -t 7))
+    self.complete!
   end
 end

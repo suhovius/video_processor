@@ -16,7 +16,7 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
             "video_processing_info" => {
               "trim_start" => 2,
               "trim_end" => 12,
-              "source_file" => fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime')
+              "source_video" => fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime')
             }
           }
         end
@@ -33,7 +33,7 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
 
           video_processing_info = @user.video_processing_infos.last
 
-          expect(json["source_file"]["url"]).to eql video_processing_info.source_file.url
+          expect(json["source_video"]["url"]).to eql video_processing_info.source_video.url
 
           expect(json).to match(video_processing_info_hash(video_processing_info))
         end
@@ -57,7 +57,7 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
             "error" => "Trim end can't be blank",
             "details" => {
               "trim_end" => ["can't be blank", "is not a number"],
-              "source_file"=>["can't be blank"]
+              "source_video"=>["can't be blank"]
             }
           }
 
@@ -72,7 +72,7 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
           "video_processing_info" => {
             "trim_start" => 2,
             "trim_end" => 12,
-            "source_file" => fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime')
+            "source_video" => fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime')
           }
         }
       end
@@ -197,13 +197,13 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
         "id" => video_processing_info.id.to_s,
         "trim_start" => video_processing_info.trim_start,
         "trim_end" => video_processing_info.trim_end,
-        "source_file" => {
-          "url" => video_processing_info.source_file.url,
-          "duration" => video_processing_info.source_file_duration
+        "source_video" => {
+          "url" => video_processing_info.source_video.url,
+          "duration" => video_processing_info.source_video_duration
         },
-        "result_file" => {
-          "url" => video_processing_info.result_file? ? video_processing_info.result_file.url : nil,
-          "duration" => video_processing_info.result_file_duration
+        "result_video" => {
+          "url" => video_processing_info.result_video? ? video_processing_info.result_video.url : nil,
+          "duration" => video_processing_info.result_video_duration
         },
         "started_at" => video_processing_info.started_at? ? video_processing_info.started_at.to_i : nil ,
         "completed_at" => video_processing_info.completed_at? ? video_processing_info.completed_at.to_i : nil,
