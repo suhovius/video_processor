@@ -69,6 +69,25 @@ describe Api::V1::VideoProcessingTasksController, type: :api do
 
           expect(json).to match(expected_error_hash)
         end
+
+        context 'when video_processing_task is omitted in params' do
+          before do
+            @params = {}
+          end
+
+          it "should not create video_processing_task and return error" do
+            expect { post "/api/v1/video_processing_tasks.json", @params, @auth_params }.to_not change { @user.video_processing_tasks.count }
+
+            expect(last_response.status).to eql http_status_for(:unprocessable_entity)
+
+            expected_error_hash = {
+              "error" => "param is missing or the value is empty: video_processing_task",
+              "details" => {}
+            }
+
+            expect(json).to match(expected_error_hash)
+          end
+        end
       end
     end
 
