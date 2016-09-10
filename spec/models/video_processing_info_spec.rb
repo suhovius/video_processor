@@ -4,6 +4,16 @@ RSpec.describe VideoProcessingInfo, :type => :model do
   context 'validations' do
     it { should have_mongoid_attached_file(:source_video) }
     it { should have_mongoid_attached_file(:result_video) }
+
+    context 'when trim_start is greater than trim_end' do
+      let(:video_processing_info) { build(:video_processing_info, trim_start: 10, trim_end: 3, source_video_duration: 15) }
+
+      it "should not save record and return error" do
+        video_processing_info.save
+        expect(video_processing_info).to_not be_persisted
+        expect(video_processing_info.errors.messages[:base]).to include(I18n.t("mongoid.errors.models.video_processing_info.trim_start_should_be_less_than_trim_end"))
+      end
+    end
   end
 
   context 'associations' do
@@ -143,6 +153,22 @@ RSpec.describe VideoProcessingInfo, :type => :model do
             it "should save it in last_error attribute and set state to failed" do
               expect { @video_processing_info.perform_processing! }.to change { @video_processing_info.reload.state }.from("scheduled").to("failed")
               expect(@video_processing_info.last_error).to eql exception.message
+            end
+          end
+
+          context 'when trim_start is greater than source_video duration' do
+            let(:video_processing_info) { create(:video_processing_info, trim_start: 20, trim_end: 25, source_video_duration: 15) }
+            it "should save error in last_error attribute and set state to failed" do
+              expect { video_processing_info.perform_processing! }.to change { video_processing_info.reload.state }.from("scheduled").to("failed")
+              expect(video_processing_info.last_error).to eql "#{video_processing_info.class.human_attribute_name(:trim_start)} #{I18n.t('mongoid.errors.models.video_processing_info.can_not_be_greater_than_source_video_duration')}"
+            end
+          end
+
+          context 'when trim_end is greater than source_video duration' do
+            let(:video_processing_info) { create(:video_processing_info, trim_start: 10, trim_end: 25, source_video_duration: 15) }
+            it "should save error in last_error attribute and set state to failed" do
+              expect { video_processing_info.perform_processing! }.to change { video_processing_info.reload.state }.from("scheduled").to("failed")
+              expect(video_processing_info.last_error).to eql "#{video_processing_info.class.human_attribute_name(:trim_end)} #{I18n.t('mongoid.errors.models.video_processing_info.can_not_be_greater_than_source_video_duration')}"
             end
           end
         end

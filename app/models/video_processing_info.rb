@@ -17,6 +17,8 @@ class VideoProcessingInfo
 
   validates :trim_start, :trim_end, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
+  validate :trim_start_is_not_greater_than_trim_end
+
   VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
   # TODO: Refactor this. Remove code duplication for attachments
@@ -92,6 +94,8 @@ class VideoProcessingInfo
     tmp_dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
     begin
       self.start!
+      validate_trim_attribute_is_not_greater_than_source_video_duration(:trim_start)
+      validate_trim_attribute_is_not_greater_than_source_video_duration(:trim_end)
       FileUtils.mkdir_p(tmp_dir_path)
       source_video_extension = File.extname(self.source_video_file_name)
       source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
@@ -117,4 +121,13 @@ class VideoProcessingInfo
     self.schedule!
     self.enqueue!
   end
+
+  private
+    def trim_start_is_not_greater_than_trim_end
+      self.errors.add(:base, I18n.t("mongoid.errors.models.video_processing_info.trim_start_should_be_less_than_trim_end")) if (self.trim_start? && self.trim_end?) && (self.trim_start.to_i >= self.trim_end.to_i)
+    end
+
+    def validate_trim_attribute_is_not_greater_than_source_video_duration(trim_attr_name)
+      raise Exception, "#{self.class.human_attribute_name(trim_attr_name)} #{I18n.t('mongoid.errors.models.video_processing_info.can_not_be_greater_than_source_video_duration')}" if self.send("#{trim_attr_name}?") && self.source_video_duration? && self.send(trim_attr_name) > self.source_video_duration
+    end
 end

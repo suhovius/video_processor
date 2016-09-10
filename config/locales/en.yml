@@ -12,3 +12,10 @@ en:
   ffmpeg:
     errors:
       encoding_failed: "FFMPEG: Failed encoding"
+
+  mongoid:
+    errors:
+      models:
+        video_processing_info:
+          trim_start_should_be_less_than_trim_end: "Trim start should be less than trim end"
+          can_not_be_greater_than_source_video_duration: "can not be greater than source video duration"
