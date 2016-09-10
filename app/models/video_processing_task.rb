@@ -22,11 +22,11 @@ class VideoProcessingTask
   VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
   # TODO: Refactor this. Remove code duplication for attachments
-  has_mongoid_attached_file :source_video
+  has_mongoid_attached_file :source_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
   validates_attachment_content_type :source_video, content_type: VIDEO_CONTENT_TYPES
   validates_attachment_presence :source_video
 
-  has_mongoid_attached_file :result_video
+  has_mongoid_attached_file :result_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
   validates_attachment_content_type :result_video, content_type: VIDEO_CONTENT_TYPES
 
   after_post_process do |record|
@@ -47,22 +47,22 @@ class VideoProcessingTask
     state :done
     state :failed
 
-    before_transition scheduled: :processing do |vpi|
-      vpi.started_at = Time.zone.now
-      vpi.failed_at = nil
+    before_transition scheduled: :processing do |vpt|
+      vpt.started_at = Time.zone.now
+      vpt.failed_at = nil
     end
 
-    before_transition failed: :scheduled do |vpi|
-      vpi.started_at = nil
-      vpi.failed_at = nil
+    before_transition failed: :scheduled do |vpt|
+      vpt.started_at = nil
+      vpt.failed_at = nil
     end
 
-    before_transition processing: :done do |vpi|
-      vpi.completed_at = Time.zone.now
+    before_transition processing: :done do |vpt|
+      vpt.completed_at = Time.zone.now
     end
 
-    before_transition processing: :failed do |vpi|
-      vpi.failed_at = Time.zone.now
+    before_transition processing: :failed do |vpt|
+      vpt.failed_at = Time.zone.now
     end
 
     event :schedule do

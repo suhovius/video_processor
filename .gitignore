@@ -22,3 +22,4 @@ config/secrets.yml
 config/mongoid.yml
 config/sidekiq.yml
 /.powenv
+/.env
