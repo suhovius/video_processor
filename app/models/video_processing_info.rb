@@ -90,33 +90,6 @@ class VideoProcessingInfo
     end
   end
 
-  def perform_processing!
-    tmp_dir_path = "#{::Rails.root}/tmp/video_processing_infos/#{self.id.to_s}"
-    begin
-      self.start!
-      validate_trim_attribute_is_not_greater_than_source_video_duration(:trim_start)
-      validate_trim_attribute_is_not_greater_than_source_video_duration(:trim_end)
-      FileUtils.mkdir_p(tmp_dir_path)
-      source_video_extension = File.extname(self.source_video_file_name)
-      source_video_basename = File.basename(self.source_video_file_name, source_video_extension)
-      tmp_file_path = "#{tmp_dir_path}/#{source_video_basename}_trim_from_#{self.trim_start}_to_#{self.trim_end}#{source_video_extension}"
-      movie = FFMPEG::Movie.new(self.source_video.path)
-      movie.transcode(tmp_file_path, ["-ss", self.trim_start.to_s, "-t", (self.trim_end - self.trim_start).to_s])
-      File.open(tmp_file_path, "r") do |file|
-        self.result_video = file
-        self.complete!
-      end
-    rescue FFMPEG::Error => e
-      self.last_error = I18n.t("ffmpeg.errors.encoding_failed") # FFMPEG Error message is too much unreadable. Let's use here some user friendly text.
-      self.failure!
-    rescue Exception => e
-      self.last_error = e.message
-      self.failure!
-    ensure
-      FileUtils.rm_rf(tmp_dir_path) if Dir.exists?(tmp_dir_path)
-    end
-  end
-
   def restart!
     self.schedule!
     self.enqueue!
@@ -125,9 +98,5 @@ class VideoProcessingInfo
   private
     def trim_start_is_not_greater_than_trim_end
       self.errors.add(:base, I18n.t("mongoid.errors.models.video_processing_info.trim_start_should_be_less_than_trim_end")) if (self.trim_start? && self.trim_end?) && (self.trim_start.to_i >= self.trim_end.to_i)
-    end
-
-    def validate_trim_attribute_is_not_greater_than_source_video_duration(trim_attr_name)
-      raise Exception, "#{self.class.human_attribute_name(trim_attr_name)} #{I18n.t('mongoid.errors.models.video_processing_info.can_not_be_greater_than_source_video_duration')}" if self.send("#{trim_attr_name}?") && self.source_video_duration? && self.send(trim_attr_name) > self.source_video_duration
     end
 end

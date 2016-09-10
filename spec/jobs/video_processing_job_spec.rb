@@ -14,7 +14,9 @@ RSpec.describe VideoProcessingJob, type: :job do
 
   it 'executes perform' do
     expect(VideoProcessingInfo).to receive(:find).with(video_processing_info.id.to_s).and_return(video_processing_info)
-    expect(video_processing_info).to receive(:perform_processing!)
+    video_trimmer = double(:video_trimmer)
+    expect(VideoTrimmer).to receive(:new).with(video_processing_info).and_return(video_trimmer)
+    expect(video_trimmer).to receive(:perform!)
     perform_enqueued_jobs { job }
   end
 end
