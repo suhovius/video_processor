@@ -16,6 +16,26 @@ FactoryGirl.define do
     source_video_file_size { 5471296 }
     source_video_updated_at { Time.zone.now }
     source_video_fingerprint { "068dd109a9939f494071d8abe94b1c0c" }
+    source_video_duration { rand(10) + 15 }
+
+    factory :video_processing_task_done do
+      started_at { Time.zone.now - 5.minutes }
+      completed_at { Time.zone.now }
+
+      result_video_file_name { "test_video.mov" }
+      result_video_content_type { "video/quicktime" }
+      result_video_file_size { 5471296 }
+      result_video_updated_at { Time.zone.now }
+      result_video_fingerprint { "068dd109a9939f454071d8abe94b7c0c" }
+      result_video_duration { 7 }
+      state { "done" }
+    end
+
+    factory :video_processing_task_failed do
+      started_at { Time.zone.now - 5.minutes }
+      last_error { "Some error message #{rand(100)}" }
+      state { "failed" }
+    end
 
     factory :video_processing_task_with_real_file do
       source_video { fixture_file_upload("#{::Rails.root}/spec/fixtures/videos/test_video.mov", 'video/quicktime') }

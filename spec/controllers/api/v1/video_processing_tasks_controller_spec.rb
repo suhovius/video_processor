@@ -103,9 +103,9 @@ describe Api::V1::VideoProcessingTasksController, type: :api do
 
       context "with valid params" do
         before do
-          @video_processing_tasks = 3.times.map do |i|
+          @video_processing_tasks = [:video_processing_task, :video_processing_task_done, :video_processing_task_failed].each_with_index.map do |factory_name, i|
             travel_to (Time.zone.now - i.hour) do
-              create(:video_processing_task, user: @user)
+              create(factory_name, user: @user)
             end
           end
         end
