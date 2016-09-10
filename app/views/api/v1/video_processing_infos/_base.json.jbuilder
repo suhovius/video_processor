@@ -1,6 +1,6 @@
 json.id video_processing_info.id.to_s
 
-json.(video_processing_info, :trim_start, :trim_end, :state)
+json.(video_processing_info, :trim_start, :trim_end, :state, :last_error)
 
 [:source_video, :result_video].each do |attr_name|
   json.set! attr_name do

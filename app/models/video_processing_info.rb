@@ -53,7 +53,6 @@ class VideoProcessingInfo
     before_transition failed: :scheduled do |vpi|
       vpi.started_at = nil
       vpi.failed_at = nil
-      vpi.enqueue!
     end
 
     before_transition processing: :done do |vpi|
@@ -112,5 +111,10 @@ class VideoProcessingInfo
     ensure
       FileUtils.rm_rf(dir_path) if Dir.exists?(dir_path)
     end
+  end
+
+  def restart!
+    self.schedule!
+    self.enqueue!
   end
 end

@@ -37,6 +37,12 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
 
           expect(json).to match(video_processing_info_hash(video_processing_info))
         end
+
+        it "should enqueue created video_processing_info into background queue" do
+          expect { post "/api/v1/video_processing_infos.json", @params, @auth_params }.to change { @user.video_processing_infos.count }.by(1)
+          video_processing_info = @user.video_processing_infos.last
+          expect(VideoProcessingJob).to have_been_enqueued.with(global_id(video_processing_info))
+        end
       end
 
       context "with invalid params" do
@@ -187,6 +193,11 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
           expect(last_response.status).to eql http_status_for(:accepted)
           expect(json).to match(video_processing_info_hash(@video_processing_info.reload))
         end
+
+        it "should enqueue restarted video_processing_info into background queue" do
+          expect { patch "/api/v1/video_processing_infos/#{@video_processing_info.id}/restart.json", @params, @auth_params }.to change { @video_processing_info.reload.state }.from("failed").to("scheduled")
+          expect(VideoProcessingJob).to have_been_enqueued.with(global_id(@video_processing_info))
+        end
       end
     end
   end
@@ -208,7 +219,8 @@ describe Api::V1::VideoProcessingInfosController, type: :api do
         "started_at" => video_processing_info.started_at? ? video_processing_info.started_at.to_i : nil ,
         "completed_at" => video_processing_info.completed_at? ? video_processing_info.completed_at.to_i : nil,
         "failed_at" => video_processing_info.failed_at? ? video_processing_info.to_i : nil,
-        "state" => video_processing_info.state
+        "state" => video_processing_info.state,
+        "last_error" => video_processing_info.last_error
       }
     end
 

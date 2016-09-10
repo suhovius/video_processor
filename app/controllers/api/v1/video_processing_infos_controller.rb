@@ -12,7 +12,7 @@ class Api::V1::VideoProcessingInfosController < ::Api::BaseController
 
   def restart
     @video_processing_info = current_user.video_processing_infos.find(params[:id])
-    @video_processing_info.schedule!
+    @video_processing_info.restart!
     render status: :accepted, action: "show"
   end
 
