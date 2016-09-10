@@ -73,6 +73,20 @@ RSpec.describe VideoProcessingInfo, :type => :model do
   end
 
   context 'instance methods' do
+    describe "enqueue!" do
+      context 'when video_processing_info is scheduled' do
+        let(:video_processing_info) { build_stubbed(:video_processing_info, state: "scheduled") }
+        it "should insert this task into background queue" do
+          expect { video_processing_info.enqueue! }.to enqueue_a(VideoProcessingJob).with(global_id(video_processing_info))
+        end
+      end
+
+      context 'when video_processing_info is not scheduled' do
+        let(:video_processing_info) { build_stubbed(:video_processing_info, state: "done") }
+        specify { expect { video_processing_info.enqueue! }.to raise_exception(ApiError, I18n.t("api.errors.data.can_not_enqueue")) }
+      end
+    end
+
     describe "perform_processing!" do
       context 'when video_processing_info is scheduled' do
         context 'real file processing test' do
@@ -132,6 +146,16 @@ RSpec.describe VideoProcessingInfo, :type => :model do
             end
           end
         end
+      end
+    end
+
+    describe "restart!" do
+      let(:video_processing_info) { build_stubbed(:video_processing_info, state: "failed") }
+
+      it "should schedule and enqueue failed task" do
+        expect(video_processing_info).to receive(:schedule!)
+        expect(video_processing_info).to receive(:enqueue!)
+        video_processing_info.restart!
       end
     end
   end
