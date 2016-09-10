@@ -92,7 +92,6 @@ GEM
     mimemagic (0.3.2)
     mini_portile2 (2.1.0)
     minitest (5.9.0)
-    mock_redis (0.17.0)
     mongo (2.3.0)
       bson (~> 4.1)
     mongoid-paperclip (0.0.11)
@@ -176,9 +175,6 @@ GEM
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
       rspec-support (~> 3.1.0)
-    rspec-sidekiq (2.2.0)
-      rspec (~> 3.0, >= 3.0.0)
-      sidekiq (>= 2.4.0)
     rspec-support (3.1.2)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
@@ -228,7 +224,6 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   kaminari-mongoid (~> 0.1.0)
   listen (~> 3.0.5)
-  mock_redis
   mongoid!
   mongoid-paperclip
   mongoid-rspec
@@ -238,7 +233,6 @@ DEPENDENCIES
   rb-fsevent (<= 0.9.4)
   rspec-activejob
   rspec-rails (= 3.1.0)
-  rspec-sidekiq
   shoulda-matchers (~> 3.1)
   sidekiq
   simplecov

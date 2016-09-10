@@ -49,13 +49,10 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-sidekiq'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'simplecov'
-  # gem 'webmock'
-  gem 'mock_redis'
   gem 'state_machine_rspec'
-  gem 'mongoid-rspec' # Unfortunately there is no this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
+  gem 'mongoid-rspec' # Unfortunately there is no any this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
 end
 
 group :development do

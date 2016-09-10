@@ -20,6 +20,7 @@ require 'rspec/active_job'
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  config.include ActiveJob::TestHelper, type: :job
   config.include(RSpec::ActiveJob)
 
   # clean out the queue after each spec
