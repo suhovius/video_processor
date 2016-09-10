@@ -9,6 +9,7 @@ Currently it supports only one operation video trimming.
 * Install mongoDB, Redis, ffmpeg on your machine
 * Copy and configure config/secrets.yml.example to config/secrets.yml
 * Copy and configure config/mongoid.yml.example to config/mongoid.yml
+* Copy and configure config/sidekiq.yml.example to config/sidekiq.yml
 
 ## Tech Stack
 

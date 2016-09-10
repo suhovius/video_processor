@@ -20,4 +20,5 @@ public/system
 coverage/
 config/secrets.yml
 config/mongoid.yml
+config/sidekiq.yml
 /.powenv

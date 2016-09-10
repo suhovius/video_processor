@@ -158,6 +158,9 @@ GEM
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
+    rspec-activejob (0.6.1)
+      activejob (>= 4.2)
+      rspec-mocks
     rspec-core (3.1.7)
       rspec-support (~> 3.1.0)
     rspec-expectations (3.1.2)
@@ -233,6 +236,7 @@ DEPENDENCIES
   pry-rails
   rails (~> 5.0.0, >= 5.0.0.1)
   rb-fsevent (<= 0.9.4)
+  rspec-activejob
   rspec-rails (= 3.1.0)
   rspec-sidekiq
   shoulda-matchers (~> 3.1)
