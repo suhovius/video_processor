@@ -21,7 +21,6 @@ class VideoProcessingTask
 
   VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
-  # TODO: Refactor this. Remove code duplication for attachments
   has_mongoid_attached_file :source_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
   validates_attachment_content_type :source_video, content_type: VIDEO_CONTENT_TYPES
   validates_attachment_presence :source_video
