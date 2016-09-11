@@ -193,7 +193,7 @@ describe Api::V1::VideoProcessingTasksController, type: :api do
           expect(last_response.status).to eql http_status_for(:unprocessable_entity)
 
           expected_error_hash = {
-            "error" => I18n.t("api.errors..data.invalid_transition", state_attr_name: "state", current_state_name: "done", event_name: "schedule"),
+            "error" => I18n.t("api.errors.data.invalid_transition", state_attr_name: "state", current_state_name: "done", event_name: "schedule"),
             "details" => {}
           }
 

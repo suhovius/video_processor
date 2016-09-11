@@ -1,0 +1,294 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="./../../assets/images/favicon.ico">
+
+    <title>Video Processor API documentation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./../../assets/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="./../../assets/stylesheets/dashboard.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="./../../docs/index.html">Video Processor API documentation</a>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <input id="search" type="text" class="form-control search-input" placeholder="Search...">
+          <ul class="nav nav-sidebar hideseek-data">
+            
+              <li class=""><a href="./../../docs/users/create.html">Request new user token</a></li>
+            
+              <li class="active"><a href="./../../docs/video_processing_tasks/create.html">Create video processing task</a></li>
+            
+              <li class=""><a href="./../../docs/video_processing_tasks/index.html">Get video processing tasks list</a></li>
+            
+              <li class=""><a href="./../../docs/video_processing_tasks/restart.html">Restart failed video processing task</a></li>
+            
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Create video processing task</h1>
+          <div class="panel panel-default">
+            <div class="panel-heading">ID: video_processing_tasks/create</div>
+            <div class="panel-body">Upload video with time trimming parameters. User can use the mobile app to upload video and define timing parameters. After that, the request must be processed in the background.
+            </div>
+          </div>
+
+          <h3>Request</h3>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">URL</div>
+            <div class="panel-body">
+              /api/v1/video_processing_tasks.json
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">Method</div>
+            <div class="panel-body">POST</div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">Format</div>
+            <div class="panel-body">json</div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">Headers</div>
+            <table class="table table-hover">
+              <tr>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Description</th>
+                <th>Required</th>
+              </tr>
+              
+                <tr>
+                  <td>Authorization:</td>
+                  <td>Token token=:token_value</td>
+                  <td>:token_value - is an authorization token value (api_token)</td>
+                  <td>Yes</td>
+                </tr>
+              
+            </table>
+          </div>
+
+          
+          
+            <div class="panel panel-default">
+              <div class="panel-heading">Url params</div>
+              
+                
+                <div class="panel-body">
+                  
+                  
+                </div>
+              
+            </div>
+          
+            <div class="panel panel-default">
+              <div class="panel-heading">Data params</div>
+              
+                
+                <div class="panel-body">
+                  
+                  <div class='indented-line'>{<div class='indented-line'><span class='field_name'>video_processing_task</span>:&nbsp;<span class='field_details'>&nbsp;//&nbsp;document,&nbsp;Video processing task params</span><div class='indented-line'>{<div class='indented-line'><span class='field_name'>trim_start</span>:&nbsp;<span class='field_type'>integer</span>,<span class='field_details'>&nbsp;//&nbsp;Video start trimming parameter in seconds; <span class='required_field'> required</span>; example value: 8</span></div><div class='indented-line'><span class='field_name'>trim_end</span>:&nbsp;<span class='field_type'>integer</span>,<span class='field_details'>&nbsp;//&nbsp;Video end trimming parameter in seconds; <span class='required_field'> required</span>; example value: 18</span></div><div class='indented-line'><span class='field_name'>source_video</span>:&nbsp;<span class='field_type'>file</span><span class='field_details'>&nbsp;//&nbsp;Video multipart data file; <span class='required_field'> required</span></span></div>}</div></div>}</div>
+                </div>
+              
+            </div>
+          
+
+          <h3>Responses</h3>
+
+          
+            <div class="panel panel-default group">
+              <div class="panel panel-default">
+                <div class="panel-body">Success</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">HTTP Status</div>
+                <div class="panel-body">201 CREATED</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">Format</div>
+                <div class="panel-body">json</div>
+              </div>
+
+              
+              
+                
+                
+              
+                
+                
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Data params</div>
+                    <div class="panel-body">
+                      
+                      <div class='indented-line'>{<div class='indented-line'><span class='field_name'>id</span>:&nbsp;<span class='field_type'>string</span>,<span class='field_details'>&nbsp;//&nbsp;Video processing task database ID; example value: 0d10e5e1e16b28bb2142e4a6</span></div><div class='indented-line'><span class='field_name'>trim_start</span>:&nbsp;<span class='field_type'>integer</span>,<span class='field_details'>&nbsp;//&nbsp;Video start trimming parameter in seconds; example value: 1</span></div><div class='indented-line'><span class='field_name'>trim_end</span>:&nbsp;<span class='field_type'>integer</span>,<span class='field_details'>&nbsp;//&nbsp;Video end trimming parameter in seconds; example value: 20</span></div><div class='indented-line'><span class='field_name'>source_video</span>:&nbsp;<span class='field_details'>&nbsp;//&nbsp;document,&nbsp;Source video file details</span><div class='indented-line'>{<div class='indented-line'><span class='field_name'>url</span>:&nbsp;<span class='field_type'>string</span>,<span class='field_details'>&nbsp;//&nbsp;source file url; example value: http://video_processor.dev/system/video_processing_tasks/source_videos/57d4/6ce8/07ae/1d3b/2b95/ad50/original/test_video.mov?1473539304</span></div><div class='indented-line'><span class='field_name'>duration</span>:&nbsp;<span class='field_type'>integer</span><span class='field_details'>&nbsp;//&nbsp;source file duration; example value: 44</span></div>}</div>,</div><div class='indented-line'><span class='field_name'>result_video</span>:&nbsp;<span class='field_details'>&nbsp;//&nbsp;document,&nbsp;Result video file details</span><div class='indented-line'>{<div class='indented-line'><span class='field_name'>url</span>:&nbsp;<span class='field_type'>string</span>,<span class='field_details'>&nbsp;//&nbsp;result file url; example value: http://video_processor.dev/system/video_processing_tasks/result_videos/36d4/6ce8/07ae/1d3b/2b75/ad50/original/test_video.mov?1773499304</span></div><div class='indented-line'><span class='field_name'>duration</span>:&nbsp;<span class='field_type'>integer</span><span class='field_details'>&nbsp;//&nbsp;result file duration; example value: 6</span></div>}</div>,</div><div class='indented-line'><span class='field_name'>started_at</span>:&nbsp;<span class='field_type'>timestamp</span>,<span class='field_details'>&nbsp;//&nbsp;Task started at unix timestamp</span></div><div class='indented-line'><span class='field_name'>completed_at</span>:&nbsp;<span class='field_type'>timestamp</span>,<span class='field_details'>&nbsp;//&nbsp;Task completed at unix timestamp</span></div><div class='indented-line'><span class='field_name'>failed_at</span>:&nbsp;<span class='field_type'>timestamp</span>,<span class='field_details'>&nbsp;//&nbsp;Task failed at unix timestamp</span></div><div class='indented-line'><span class='field_name'>created_at</span>:&nbsp;<span class='field_type'>timestamp</span>,<span class='field_details'>&nbsp;//&nbsp;Task created at unix timestamp</span></div><div class='indented-line'><span class='field_name'>updated_at</span>:&nbsp;<span class='field_type'>timestamp</span>,<span class='field_details'>&nbsp;//&nbsp;Task updated at unix timestamp</span></div><div class='indented-line'><span class='field_name'>state</span>:&nbsp;<span class='field_type'>string</span>,<span class='field_details'>&nbsp;//&nbsp;Task state. Could be: scheduled, processing, done, failed; example value: done</span></div><div class='indented-line'><span class='field_name'>last_error</span>:&nbsp;<span class='field_type'>string</span><span class='field_details'>&nbsp;//&nbsp;Task last error message that happened during video processing; example value: FFMPEG: Failed encoding</span></div>}</div>
+                    </div>
+                  </div>
+                
+              
+            </div>
+          
+            <div class="panel panel-default group">
+              <div class="panel panel-default">
+                <div class="panel-body">Invalid parameters</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">HTTP Status</div>
+                <div class="panel-body">422 UNPROCESSABLE ENTITY</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">Format</div>
+                <div class="panel-body">json</div>
+              </div>
+
+              
+              
+                
+                
+              
+                
+                
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Data params</div>
+                    <div class="panel-body">
+                      
+                      <div class='indented-line'>{<div class='indented-line'><span class='field_name'>error</span>:&nbsp;<span class='field_type'>string</span>,<span class='field_details'>&nbsp;//&nbsp;Human readable error message; example value: Trim end can't be blank, Trim end is not a number, Source video can't be blank</span></div><div class='indented-line'><span class='field_name'>details</span>:&nbsp;<span class='field_details'>&nbsp;//&nbsp;document,&nbsp;error details, can be used for highlighting invalid fields at native app UI</span><div class='indented-line'>{<div class='indented-line'><span class='field_name'>trim_end</span>:&nbsp;<span class='field_type'>array</span>,<span class='field_details'>&nbsp;//&nbsp;errors array on specific field; example value: ["can't be blank", "is not a number"]</span></div><div class='indented-line'><span class='field_name'>source_video</span>:&nbsp;<span class='field_type'>array</span><span class='field_details'>&nbsp;//&nbsp;errors array on specific field; example value: ["can't be blank"]</span></div>}</div></div>}</div>
+                    </div>
+                  </div>
+                
+              
+            </div>
+          
+            <div class="panel panel-default group">
+              <div class="panel panel-default">
+                <div class="panel-body">User is not authorized</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">HTTP Status</div>
+                <div class="panel-body">401 UNAUTHORIZED</div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">Format</div>
+                <div class="panel-body">json</div>
+              </div>
+
+              
+              
+                
+                
+              
+                
+                
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Data params</div>
+                    <div class="panel-body">
+                      
+                      <div class='indented-line'>{<div class='indented-line'><span class='field_name'>error</span>:&nbsp;<span class='field_type'>string</span><span class='field_details'>&nbsp;//&nbsp;Api Token is not valid error message; example value: Bad Credentials</span></div>}</div>
+                    </div>
+                  </div>
+                
+              
+            </div>
+          
+
+          
+            <div class="panel panel-default">
+              <div class="panel-heading">Sample Call</div>
+              <div class="panel-body">curl -v -H "Authorization: Token token=YwXdQ64vI5oam8ukfUx4SAtt" --form video_processing_task[trim_start]=3 --form video_processing_task[trim_end]=12 --form video_processing_task[source_video]=@spec/fixtures/videos/test_video.mov http://video_processor.dev/api/v1/video_processing_tasks.json</div>
+            </div>
+          
+
+          
+            <div class="panel panel-default">
+              <div class="panel-heading">Sample Response</div>
+              <div class="panel-body">
+                <pre>{
+   "id":"57d52ca107ae1d24852e6afe",
+   "trim_start":3,
+   "trim_end":12,
+   "state":"scheduled",
+   "last_error":null,
+   "source_video":{
+      "url":"http://video_processor.dev/system/video_processing_tasks/source_videos/57d5/2ca1/07ae/1d24/852e/6afe/original/test_video.mov?1473588385",
+      "duration":15
+   },
+   "result_video":{
+      "url":null,
+      "duration":null
+   },
+   "started_at":null,
+   "completed_at":null,
+   "failed_at":null,
+   "created_at":1473588385,
+   "updated_at":1473588385
+}</pre>
+              </div>
+            </div>
+          
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./../../assets/javascripts/jquery-1.11.1.min.js"></script>
+    <script src="./../../assets/javascripts/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="./../../assets/javascripts/ie10-viewport-bug-workaround.js"></script>
+    <script src="./../../assets/javascripts/jquery.hideseek.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('#search').hideseek({
+            list: '.hideseek-data',
+            highlight: true,
+            nodata: 'No results found',
+            navigation: true
+          });
+      });
+    </script>
+
+  </body>
+</html>
