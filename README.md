@@ -7,6 +7,7 @@ Currently it supports only one operation video trimming.
 ## Api Documentation
 * In form of HTML is Available [here](https://suhovius.github.io/api_docs/video_processor/docs/index.html)
 * And also is placed at public project's folder here http://:domain/documentation/docs/index.html
+* I have used my [api_sketch gem](https://github.com/suhovius/api_sketch) for documentation generation. Here is it's [DSL description](https://github.com/suhovius/video_processor_api_sketch)
 
 ## Setup Project
 
