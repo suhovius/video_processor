@@ -9,6 +9,6 @@ json.(video_processing_task, :trim_start, :trim_end, :state, :last_error)
   end
 end
 
-[:started_at, :completed_at, :failed_at].each do |attr_name|
+[:started_at, :completed_at, :failed_at, :created_at, :updated_at].each do |attr_name|
   json.set! attr_name, video_processing_task.send("#{attr_name}?") ? video_processing_task.send(attr_name).to_i : nil
 end

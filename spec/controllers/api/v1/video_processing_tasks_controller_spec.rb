@@ -237,9 +237,11 @@ describe Api::V1::VideoProcessingTasksController, type: :api do
         },
         "started_at" => video_processing_task.started_at? ? video_processing_task.started_at.to_i : nil ,
         "completed_at" => video_processing_task.completed_at? ? video_processing_task.completed_at.to_i : nil,
-        "failed_at" => video_processing_task.failed_at? ? video_processing_task.to_i : nil,
+        "failed_at" => video_processing_task.failed_at? ? video_processing_task.failed_at.to_i : nil,
         "state" => video_processing_task.state,
-        "last_error" => video_processing_task.last_error
+        "last_error" => video_processing_task.last_error,
+        "created_at" => video_processing_task.created_at ? video_processing_task.created_at.to_i : nil,
+        "updated_at" => video_processing_task.updated_at ? video_processing_task.updated_at.to_i : nil
       }
     end
 

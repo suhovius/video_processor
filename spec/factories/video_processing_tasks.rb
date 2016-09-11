@@ -33,6 +33,7 @@ FactoryGirl.define do
 
     factory :video_processing_task_failed do
       started_at { Time.zone.now - 5.minutes }
+      failed_at { Time.zone.now }
       last_error { "Some error message #{rand(100)}" }
       state { "failed" }
     end
