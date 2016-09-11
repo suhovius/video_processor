@@ -60,7 +60,7 @@ describe Api::V1::VideoProcessingTasksController, type: :api do
           expect(last_response.status).to eql http_status_for(:unprocessable_entity)
 
           expected_error_hash = {
-            "error" => "Trim end can't be blank",
+            "error" => "Trim end can't be blank, Trim end is not a number, Source video can't be blank",
             "details" => {
               "trim_end" => ["can't be blank", "is not a number"],
               "source_video"=>["can't be blank"]

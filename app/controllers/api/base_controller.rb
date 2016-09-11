@@ -11,7 +11,7 @@ class Api::BaseController < ApplicationController
     case exception.class.name
     when "Mongoid::Errors::Validations"
       status = :unprocessable_entity
-      error_hash[:error] = exception.try(:record).try(:errors).try(:full_messages).first || I18n.t("api.errors.data.invalid")
+      error_hash[:error] = (exception.try(:record).try(:errors).try(:full_messages) || []).join(", ") || I18n.t("api.errors.data.invalid")
       error_hash[:details] = (exception.try(:record).try(:errors) || {})
     when "Mongoid::Errors::DocumentNotFound"
       status = :not_found
