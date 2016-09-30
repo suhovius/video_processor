@@ -16,8 +16,8 @@ gem 'sidekiq'
 # Video Processing
 gem 'streamio-ffmpeg'
 
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
+# APIs
+gem 'active_model_serializers', '~> 0.10.0'
 
 # Settings
 gem 'dotenv'

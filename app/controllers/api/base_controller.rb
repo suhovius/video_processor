@@ -8,6 +8,8 @@ class Api::BaseController < ApplicationController
     status = :internal_server_error
     error_hash = { error: I18n.t("api.errors.server_error"), details: {} }
 
+    # That's why we are using string versions
+    # http://stackoverflow.com/questions/14785817/why-are-ruby-cases-not-working-with-classes
     case exception.class.name
     when "Mongoid::Errors::Validations"
       status = :unprocessable_entity
