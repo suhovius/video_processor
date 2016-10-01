@@ -29,6 +29,24 @@ class Api::BaseController < ApplicationController
     render status: status, json: error_hash, layout: false
   end
 
+  def render_json_with(resource, options={})
+    status = options[:status] || :ok
+    serializer = options[:serializer] || (self.class.name.gsub("Controller","").singularize + "Serializer").constantize
+    serializer_type = if options[:serializer_type].present?
+      options[:serializer_type]
+    elsif resource.kind_of?(Enumerable)
+      :each_serializer
+    else
+      :serializer
+    end
+    render_options = {
+      json: resource,
+      status: status
+    }
+    render_options[serializer_type] = serializer
+    render render_options
+  end
+
   protected
 
     def current_user

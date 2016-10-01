@@ -4,7 +4,7 @@ class Api::V1::UsersController < ::Api::BaseController
 
   def create
     @user = User.create!
-    render json: @user, status: :created, serializer: ::Api::V1::UserSerializer
+    render_json_with(@user, status: :created)
   end
 
 end
