@@ -7,7 +7,7 @@ gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 # Data Storage
 gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
 gem "mongoid-paperclip"
-gem 'state_machine'
+gem 'aasm'
 gem 'kaminari-mongoid', '~> 0.1.0'
 
 # Background jobs
@@ -54,7 +54,6 @@ end
 group :test do
   gem 'shoulda-matchers', '~> 3.1'
   gem 'simplecov'
-  gem 'state_machine_rspec'
   gem 'mongoid-rspec' # Unfortunately there is no any this gem versions for mongoid 6. Currently it will install here old version that would return depreaction warnings
 end
 

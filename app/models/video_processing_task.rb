@@ -3,6 +3,7 @@ class VideoProcessingTask
   include Mongoid::Timestamps
   include Mongoid::Paperclip
   include GlobalID::Identification # http://guides.rubyonrails.org/active_job_basics.html#globalid
+  include AASM
 
   field :started_at, type: Time
   field :completed_at, type: Time
@@ -12,6 +13,7 @@ class VideoProcessingTask
   field :source_video_duration, type: Integer
   field :result_video_duration, type: Integer
   field :last_error, type: String
+  field :state, type: String
 
   belongs_to :user, inverse_of: :video_processing_tasks
 
@@ -40,44 +42,44 @@ class VideoProcessingTask
     end
   end
 
-  state_machine initial: :scheduled do
-    state :scheduled
+  aasm column: 'state' do
+    state :scheduled, initial: true
     state :processing
     state :done
     state :failed
 
-    before_transition scheduled: :processing do |vpt|
-      vpt.started_at = Time.zone.now
-      vpt.failed_at = nil
-    end
-
-    before_transition failed: :scheduled do |vpt|
-      vpt.started_at = nil
-      vpt.failed_at = nil
-    end
-
-    before_transition processing: :done do |vpt|
-      vpt.completed_at = Time.zone.now
-    end
-
-    before_transition processing: :failed do |vpt|
-      vpt.failed_at = Time.zone.now
-    end
-
     event :schedule do
-      transition :failed => :scheduled
+      before do
+        self.started_at = nil
+        self.failed_at = nil
+      end
+
+      transitions from: :failed, to: :scheduled
     end
 
     event :start do
-      transition :scheduled => :processing
+      before do
+        self.started_at = Time.zone.now
+        self.failed_at = nil
+      end
+
+      transitions from: :scheduled, to: :processing
     end
 
     event :complete do
-      transition :processing => :done
+      before do
+        self.completed_at = Time.zone.now
+      end
+
+      transitions from: :processing, to: :done
     end
 
     event :failure do
-      transition :processing => :failed
+      before do
+        self.failed_at = Time.zone.now
+      end
+
+      transitions from: :processing, to: :failed
     end
   end
 

@@ -21,14 +21,46 @@ RSpec.describe VideoProcessingTask, :type => :model do
   end
 
   context 'state machine' do
-    it { should have_states :scheduled, :processing, :done, :failed }
-    it { should handle_events :start, when: :scheduled }
-    it { should handle_events :complete, when: :processing }
-    it { should handle_events :failure, when: :processing }
-    it { should handle_events :schedule, when: :failed }
-    it { should reject_events :start, :failure, :complete, when: :done }
-    it { should reject_events :failure, :complete, :start, when: :failed }
-    it { should reject_events :start, :schedule, when: :processing }
+    subject(:video_processing_task) { FactoryGirl.build(:video_processing_task) }
+
+    specify { expect(video_processing_task.aasm.states.map(&:name)).to eql [:scheduled, :processing, :done, :failed] }
+
+    specify { expect(video_processing_task).to transition_from(:failed).to(:scheduled).on_event(:schedule) }
+    specify { expect(video_processing_task).to transition_from(:scheduled).to(:processing).on_event(:start) }
+    specify { expect(video_processing_task).to transition_from(:processing).to(:done).on_event(:complete) }
+    specify { expect(video_processing_task).to transition_from(:processing).to(:failed).on_event(:failure) }
+
+    context 'when task is done' do
+      subject(:video_processing_task_done) do
+        video_processing_task.state = "done"
+        video_processing_task
+      end
+
+      specify { expect { video_processing_task_done.failure! }.to raise_exception(AASM::InvalidTransition) }
+      specify { expect { video_processing_task_done.start! }.to raise_exception(AASM::InvalidTransition) }
+      specify { expect { video_processing_task_done.complete! }.to raise_exception(AASM::InvalidTransition) }
+    end
+
+    context 'when task is failed' do
+      subject(:video_processing_task_failed) do
+        video_processing_task.state = "failed"
+        video_processing_task
+      end
+
+      specify { expect { video_processing_task_failed.failure! }.to raise_exception(AASM::InvalidTransition) }
+      specify { expect { video_processing_task_failed.start! }.to raise_exception(AASM::InvalidTransition) }
+      specify { expect { video_processing_task_failed.complete! }.to raise_exception(AASM::InvalidTransition) }
+    end
+
+    context 'when task is processing' do
+      subject(:video_processing_task_processing) do
+        video_processing_task.state = "processing"
+        video_processing_task
+      end
+
+      specify { expect { video_processing_task_processing.start! }.to raise_exception(AASM::InvalidTransition) }
+      specify { expect { video_processing_task_processing.schedule! }.to raise_exception(AASM::InvalidTransition) }
+    end
 
     context 'transition logic' do
       before do
@@ -39,7 +71,9 @@ RSpec.describe VideoProcessingTask, :type => :model do
         it "should set started_at attribute" do
           time_now = Time.zone.now
           travel_to time_now do
-            expect { @video_processing_task.start! }.to change { @video_processing_task.started_at.to_i }.from(0).to(time_now.to_i)
+            expect { @video_processing_task.start! }.to change {
+              @video_processing_task.started_at.to_i
+            }.from(0).to(time_now.to_i)
           end
         end
       end

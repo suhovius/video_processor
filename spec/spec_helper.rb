@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'rspec-rails'
 require 'support/factory_girl'
 require 'rspec/active_job'
+require 'aasm/rspec'
 
 require 'simplecov'
 SimpleCov.start 'rails'
@@ -34,8 +35,6 @@ RSpec.configure do |config|
 
   config.include ApiHelper, type: :api
   config.include Requests::JsonHelpers, type: :api
-
-  config.include StateMachineRspec::Matchers, type: :model
 
   config.include ActiveSupport::Testing::TimeHelpers
 
