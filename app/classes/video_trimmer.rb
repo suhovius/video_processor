@@ -21,6 +21,7 @@ class VideoTrimmer
         video_processing_task.result_video = file
         video_processing_task.complete!
       end
+      MetadataProcessor.new(video_processing_task, :result_video).process!
     rescue FFMPEG::Error => e
       video_processing_task.last_error = I18n.t("ffmpeg.errors.encoding_failed") # FFMPEG Error message is too much unreadable. Let's use here some user friendly text.
       video_processing_task.failure!

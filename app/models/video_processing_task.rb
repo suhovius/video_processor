@@ -25,18 +25,6 @@ class VideoProcessingTask
 
   mount_uploader :result_video, VideoUploader, mount_on: :result_video_file_name
 
-  before_save do |record|
-    if self.source_video?
-      movie = FFMPEG::Movie.new(self.source_video.path)
-      self.source_video_duration = movie.duration
-    end
-
-    if self.result_video?
-      movie = FFMPEG::Movie.new(self.result_video.path)
-      self.result_video_duration = movie.duration
-    end
-  end
-
   aasm column: 'state' do
     state :scheduled, initial: true
     state :processing
