@@ -41,11 +41,6 @@ class VideoUploader < CarrierWave::Uploader::Base
     %w(flv mp4 m3u8 ts 3gp mov avi wmv)
   end
 
-  # Accept only video content-types
-  def content_type_whitelist
-    %w(video/x-flv video/mp4 application/x-mpegURL video/MP2T video/3gpp video/quicktime video/x-msvideo video/x-ms-wmv)
-  end
-
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
   # def filename
