@@ -55,10 +55,16 @@ GEM
     bson (4.1.1)
     builder (3.2.2)
     byebug (9.0.5)
-    climate_control (0.0.3)
-      activesupport (>= 3.0)
-    cocaine (0.5.8)
-      climate_control (>= 0.0.3, < 1.0)
+    carrierwave (0.11.2)
+      activemodel (>= 3.2.0)
+      activesupport (>= 3.2.0)
+      json (>= 1.7)
+      mime-types (>= 1.16)
+      mimemagic (>= 0.3.0)
+    carrierwave-mongoid (0.10.0)
+      carrierwave (>= 0.8.0, < 0.12.0)
+      mongoid (>= 3.0, < 7.0)
+      mongoid-grid_fs (>= 1.3, < 3.0)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
     connection_pool (2.2.0)
@@ -97,9 +103,9 @@ GEM
     minitest (5.9.0)
     mongo (2.3.0)
       bson (~> 4.1)
-    mongoid-paperclip (0.0.11)
-      mongoid
-      paperclip (>= 2.3.6, != 4.3.0)
+    mongoid-grid_fs (2.3.0)
+      mime-types (>= 1.0, < 4.0)
+      mongoid (>= 3.0, < 7.0)
     mongoid-rspec (1.10.0)
       mongoid (>= 3.0.1)
       rake
@@ -109,12 +115,6 @@ GEM
     nokogiri (1.6.8)
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
-    paperclip (5.1.0)
-      activemodel (>= 4.2.0)
-      activesupport (>= 4.2.0)
-      cocaine (~> 0.5.5)
-      mime-types
-      mimemagic (~> 0.3.0)
     pkg-config (1.1.7)
     pry (0.10.4)
       coderay (~> 1.1.0)
@@ -220,12 +220,12 @@ DEPENDENCIES
   aasm
   active_model_serializers (~> 0.10.0)
   byebug
+  carrierwave-mongoid
   dotenv
   factory_girl_rails (~> 4.0)
   kaminari-mongoid (~> 0.1.0)
   listen (~> 3.0.5)
   mongoid!
-  mongoid-paperclip
   mongoid-rspec
   pry-doc
   pry-rails

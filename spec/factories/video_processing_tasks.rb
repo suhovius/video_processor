@@ -12,10 +12,10 @@ FactoryGirl.define do
 
     # Avoid using real files here
     source_video_file_name { "test_video.mov" }
-    source_video_content_type { "video/quicktime" }
-    source_video_file_size { 5471296 }
-    source_video_updated_at { Time.zone.now }
-    source_video_fingerprint { "068dd109a9939f494071d8abe94b1c0c" }
+    # source_video_content_type { "video/quicktime" }
+    # source_video_file_size { 5471296 }
+    # source_video_updated_at { Time.zone.now }
+    # source_video_fingerprint { "068dd109a9939f494071d8abe94b1c0c" }
     source_video_duration { rand(10) + 15 }
 
     factory :video_processing_task_done do
@@ -23,10 +23,10 @@ FactoryGirl.define do
       completed_at { Time.zone.now }
 
       result_video_file_name { "test_video.mov" }
-      result_video_content_type { "video/quicktime" }
-      result_video_file_size { 5471296 }
-      result_video_updated_at { Time.zone.now }
-      result_video_fingerprint { "068dd109a9939f454071d8abe94b7c0c" }
+      # result_video_content_type { "video/quicktime" }
+      # result_video_file_size { 5471296 }
+      # result_video_updated_at { Time.zone.now }
+      # result_video_fingerprint { "068dd109a9939f454071d8abe94b7c0c" }
       result_video_duration { 7 }
       state { "done" }
     end

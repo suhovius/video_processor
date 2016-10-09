@@ -6,7 +6,7 @@ gem 'rails', '~> 5.0.0', '>= 5.0.0.1'
 
 # Data Storage
 gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git'
-gem "mongoid-paperclip"
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 gem 'aasm'
 gem 'kaminari-mongoid', '~> 0.1.0'
 

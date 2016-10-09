@@ -1,7 +1,6 @@
 class VideoProcessingTask
   include Mongoid::Document
   include Mongoid::Timestamps
-  include Mongoid::Paperclip
   include GlobalID::Identification # http://guides.rubyonrails.org/active_job_basics.html#globalid
   include AASM
 
@@ -21,23 +20,39 @@ class VideoProcessingTask
 
   validate :trim_start_is_not_greater_than_trim_end
 
-  VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
+  mount_uploader :source_video, VideoUploader, mount_on: :source_video_file_name
 
-  has_mongoid_attached_file :source_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
-  validates_attachment_content_type :source_video, content_type: VIDEO_CONTENT_TYPES
-  validates_attachment_presence :source_video
+  mount_uploader :result_video, VideoUploader, mount_on: :result_video_file_name
 
-  has_mongoid_attached_file :result_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
-  validates_attachment_content_type :result_video, content_type: VIDEO_CONTENT_TYPES
+  # VIDEO_CONTENT_TYPES = ["video/x-flv", "video/mp4", "application/x-mpegURL", "video/MP2T", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"]
 
-  after_post_process do |record|
-    if self.source_video? && self.source_video.queued_for_write[:original]
-      movie = FFMPEG::Movie.new(self.source_video.queued_for_write[:original].path)
+  # has_mongoid_attached_file :source_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
+  # validates_attachment_content_type :source_video, content_type: VIDEO_CONTENT_TYPES
+  # validates_attachment_presence :source_video
+
+  # has_mongoid_attached_file :result_video, path: PAPERCLIP_FS_ATTACHMENT_PATH, url: PAPERCLIP_FS_ATTACHMENT_URL
+  # validates_attachment_content_type :result_video, content_type: VIDEO_CONTENT_TYPES
+
+  # after_post_process do |record|
+  #   if self.source_video? && self.source_video.queued_for_write[:original]
+  #     movie = FFMPEG::Movie.new(self.source_video.queued_for_write[:original].path)
+  #     self.source_video_duration = movie.duration
+  #   end
+
+  #   if self.result_video? && self.result_video.queued_for_write[:original]
+  #     movie = FFMPEG::Movie.new(self.result_video.queued_for_write[:original].path)
+  #     self.result_video_duration = movie.duration
+  #   end
+  # end
+
+  before_save do |record|
+    if self.source_video?
+      movie = FFMPEG::Movie.new(self.source_video.path)
       self.source_video_duration = movie.duration
     end
 
-    if self.result_video? && self.result_video.queued_for_write[:original]
-      movie = FFMPEG::Movie.new(self.result_video.queued_for_write[:original].path)
+    if self.result_video?
+      movie = FFMPEG::Movie.new(self.result_video.path)
       self.result_video_duration = movie.duration
     end
   end
