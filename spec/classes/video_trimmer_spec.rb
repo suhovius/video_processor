@@ -6,7 +6,7 @@ RSpec.describe VideoTrimmer do
       context 'when video_processing_task is scheduled' do
         context 'real file processing test' do
           before do
-            @video_processing_task = create(:video_processing_task_with_real_file, trim_start: 2, trim_end: 12)
+            @video_processing_task = create(:video_processing_task, trim_start: 2, trim_end: 12)
             @video_trimmer = VideoTrimmer.new(@video_processing_task)
           end
 
@@ -31,8 +31,8 @@ RSpec.describe VideoTrimmer do
           end
 
           it "should provide proper trimmig params to ffmpeg" do
-            movie = double(:movie)
-            expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).and_return(movie)
+            movie = double(:movie, :duration => rand(100) + 10)
+            expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).at_least(:once).and_return(movie)
             tmp_file_path = "#{::Rails.root}/tmp/video_processing_tasks/#{@video_processing_task.id.to_s}/test_video_trim_from_3_to_8.mov"
             expect(movie).to receive(:transcode).with(tmp_file_path, ["-ss", "3", "-t", "5"])
 
@@ -41,7 +41,9 @@ RSpec.describe VideoTrimmer do
 
           context 'when ffmpeg returns error' do
             before do
-              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).and_raise(FFMPEG::Error)
+              movie = double(:movie, :duration => rand(100) + 10)
+              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).at_least(:once).and_return(movie)
+              expect(movie).to receive(:transcode).and_raise(FFMPEG::Error)
               @video_trimmer = VideoTrimmer.new(@video_processing_task)
             end
 
@@ -55,7 +57,9 @@ RSpec.describe VideoTrimmer do
             let(:exception) { StandardError.new("Some error message #{rand(100)}") }
 
             before do
-              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).and_raise(exception)
+              movie = double(:movie, :duration => rand(100) + 10)
+              expect(FFMPEG::Movie).to receive(:new).with(@video_processing_task.source_video.path).at_least(:once).and_return(movie)
+              expect(movie).to receive(:transcode).and_raise(exception)
               @video_trimmer = VideoTrimmer.new(@video_processing_task)
             end
 

@@ -2,9 +2,6 @@ require 'rails_helper'
 
 RSpec.describe VideoProcessingTask, :type => :model do
   context 'validations' do
-    it { should have_mongoid_attached_file(:source_video) }
-    it { should have_mongoid_attached_file(:result_video) }
-
     context 'when trim_start is greater than trim_end' do
       let(:video_processing_task) { build(:video_processing_task, trim_start: 10, trim_end: 3, source_video_duration: 15) }
 

@@ -17,6 +17,7 @@
 .byebug_history
 
 public/system
+public/uploads/
 coverage/
 config/secrets.yml
 config/mongoid.yml
